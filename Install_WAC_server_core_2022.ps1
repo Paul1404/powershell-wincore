@@ -41,27 +41,27 @@ Set-DnsClientServerAddress -InterfaceIndex $InterfaceIndex  -ServerAddresses ($D
 write-Host "Check your Hostname"
 hostname
 
-#if doing via remote uncheck and edit the line below with the computer name and user
+#Entering a Remote PS Session
 $hostname = Read-Host "Input Hostname"
 $Credentials = Read-Host "Input Admin Credentials (mydomain\myuser)"
 Write-Host "Entering Remote PS Session..."
 Enter-PSSession -ComputerName $hostname -Credential $Credentials
 
-#create a new temp directory
+#Create a new temp directory
 $createDir = Read-Host "Create new Temp Directory? C:/Downloads (J/N)"
 if ($createDir -eq "J") {
     Write-Host "Creating Temp-Directory..."
     New-Item -Path C:\Downloads -ItemType directory
 }
 
-#download Windows Admin Center
+#Download Windows Admin Center
 $DownloadWAC = Read-Host "Download Windows Admin Center? (J/N)"
 if ($DownloadWAC -eq "J") {
     Write-Host "Downloading latest WAC-Version..."
     Invoke-WebRequest "http://aka.ms/WACDownload" -outfile "C:\Downloads\WindowsAdminCenterCurrent.msi"
 }
 
-#install and generate a self sign SSL
+#Installation and Generating of a self signed SSL-Certificate
 $DownloadPath = "C:\Downloads\"
 if ($DownloadWAC -eq "N") {
     $DownloadPath = Read-Host "Select Download Path of WAC.msi"
@@ -72,14 +72,13 @@ Write-Host "Installing..."
 Write-Host "Genarating SSL-Certificate..."
 
 #Set Firewall Rules
-
 $FirewallSelection = Read-Host "Apply Firewall Rules? (J/N)"
 if ($FirewallSelection -eq "J") {
     New-NetFirewallRule -DisplayName 'HTTP-Inbound' -Profile @('Domain', 'Private') -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('80', '443')
     New-NetFirewallRule -DisplayName 'HTTP-Outbound' -Profile @('Domain', 'Private') -Direction Outbound -Action Allow -Protocol TCP -LocalPort @('80', '443')
 }
 
-#Test on browser on another pc
+#Testing Correct Installation
 Write-Host "Getting IP Adress of the Device"
 $ipv4 = (Get-NetIPConfiguration | Where-Object {$_.IPv4DefaultGateway -ne $null -and $_.NetAdapter.status -ne "Disconnected"}).IPv4Address.IPAddress
 Write-Host "Installation complete, Test with Workstation on same LAN"
@@ -96,10 +95,10 @@ If ($Answer -eq "No")
 $Repeat = $False
 }
 
-$Answer = Read-Host("Script erneut ausfuehren? (J/N)")
+$Answer = Read-Host("Run Script again? (J/N)")
 if ($Answer -eq "J"){
     . $PSCommandPath
 }
 else{
-    Write-Host("Script beendet")
+    Write-Host("Script ended")
 }
