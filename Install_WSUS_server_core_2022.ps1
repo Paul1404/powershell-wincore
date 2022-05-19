@@ -1,5 +1,4 @@
 $Banner = @"
-
 ██╗    ██╗███████╗██╗   ██╗███████╗    ██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗     
 ██║    ██║██╔════╝██║   ██║██╔════╝    ██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║     ██║     
 ██║ █╗ ██║███████╗██║   ██║███████╗    ██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║     
@@ -18,8 +17,8 @@ $Banner = @"
 #Add the WSUS role and install the required roles/features
 Write-Host "Installing WSUS Server Role including ManagementTools"
 Install-WindowsFeature -Name UpdateServices -IncludeManagementTools
-#Configure WSUS post install
 
+#Configure WSUS post install4r3e2sw
 #Create a directory for WSUS
 $createDirectory = Read-Host "Create New WSUS Directory under C:\WSUS\? (J/N)"
 if ($createDirectory -eq "J") {
@@ -85,10 +84,24 @@ Get-WsusClassification | Where-Object { $_.Classification.Title -notin 'Update R
 Get-WsusClassification | Where-Object { $_.Classification.Title -in 'Update Rollups','Security Updates','Critical Updates','Updates','Service Packs'  } | Set-WsusClassification
 
 #Start a sync
-write-Host "Starting the secon Synchronization"
+write-Host "Starting the second Synchronization"
 $subscription.StartSynchronization()
 $subscription.GetSynchronizationProgress()
 $subscription.GetSynchronizationStatus()
+
+#Enable reports
+$Install_Components = Read-Host "Install NET 3.5 + Report Viewer? (J/N)"
+if ($Install_Components -eq "J") {
+    New-Item "C:\Downloads" -itemType Directory
+    #Install .NET 3.5 using the installation iso mounted in the virtual DVD drive (in this case)
+    Install-WindowsFeature NET-Framework-Core -Source D:\sources\sxs
+    #Install Microsoft CLR Types for SQL Server 2012
+    Invoke-WebRequest "http://go.microsoft.com/fwlink/?LinkID=239644&clcid=0x409" -OutFile "C:\Downloads"
+    Start-Process -FilePath 'msiexec.exe' -ArgumentList '/i C:\Downloads\2012.msi','/qn','/norestart' -Wait
+    #Install Microsoft report viewer redistributable 2012
+    Invoke-WebRequest "https://www.microsoft.com/en-us/download/confirmation.aspx?id=35747" -OutFile "C:\Downloads"
+    Start-Process -FilePath 'msiexec.exe' -ArgumentList '/i "C:\Downloads\ReportViewer 2012.msi"','/qn','/norestart','ALLUSERS=2' -Wait
+}
 
 Write-host "Initial Installation Completed"
 write-host "Now create a GPO and set client side targeting and intranet wsus server"
