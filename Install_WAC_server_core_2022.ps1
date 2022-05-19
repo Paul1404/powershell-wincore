@@ -74,21 +74,17 @@ Write-Host "Genarating SSL-Certificate..."
 #Set Firewall Rules
 $FirewallSelection = Read-Host "Apply Firewall Rules? (J/N)"
 if ($FirewallSelection -eq "J") {
-    New-NetFirewallRule -DisplayName 'HTTP-Inbound' -Profile @('Domain', 'Private') -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('80', '443')
-    New-NetFirewallRule -DisplayName 'HTTP-Outbound' -Profile @('Domain', 'Private') -Direction Outbound -Action Allow -Protocol TCP -LocalPort @('80', '443')
+    New-NetFirewallRule -DisplayName 'HTTP-Inbound' -Profile @('Domain', 'Private') -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('80', $Port)
+    New-NetFirewallRule -DisplayName 'HTTP-Outbound' -Profile @('Domain', 'Private') -Direction Outbound -Action Allow -Protocol TCP -LocalPort @('80', $Port)
 }
 
 #Testing Correct Installation
-Write-Host "Getting IP Adress of the Device"
+Write-Host "Getting IP Address of the Device"
 $ipv4 = (Get-NetIPConfiguration | Where-Object {$_.IPv4DefaultGateway -ne $null -and $_.NetAdapter.status -ne "Disconnected"}).IPv4Address.IPAddress
 Write-Host "Installation complete, Test with Workstation on same LAN"
 Write-Host "Put the IP: " $ipv4 "into your Browser. Port for Web-Access: " $Port
 
 write-Host "Script Installation Complete"
-
-#$Answer = [Windows.Forms.MessageBox]::Show("Choose again", "Repeat",
-#[Windows.Forms.MessageBoxButtons]::YESNO,
-#[Windows.Forms.MessageBoxIcon]::Information)
 
 If ($Answer -eq "No")
 {
