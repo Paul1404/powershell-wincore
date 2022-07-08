@@ -1,33 +1,33 @@
 ﻿function Install-DHCP {
     param (
-        [Parameter()]
+        [Parameter(Position=0)]
         [string]$StartRange,
 
-        [Parameter()]
+        [Parameter(Position=1)]
         [string]$EndRange,
 
-        [Parameter()]
+        [Parameter(Position=2)]
         [string]$SubMask,
 
-        [Parameter()]
+        [Parameter(Position=3)]
         [string]$Name,
 
-        [Parameter()]
+        [Parameter(Position=4)]
         [string]$LeaseDur,
 
-        [Parameter()]
+        [Parameter(Position=5)]
         [string]$ScopeID,
 
-        [Parameter()]
+        [Parameter(Position=6)]
         [string]$DNS,
 
-        [Parameter()]
+        [Parameter(Position=7)]
         [string]$Router,
 
-        [Parameter()]
+        [Parameter(Position=8)]
         [string]$DnsDomain,
 
-        [Parameter()]
+        [Parameter(Position=9)]
         [string]$DNSName
     )
 process {
