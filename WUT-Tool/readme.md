@@ -1,31 +1,41 @@
-# Windows Update Tool Script
+# Windows Update Tool (WUT) Automation Script
 
-This script is designed to automate the process of downloading and running the Windows Update Tool (WUT). The script has been designed to check the existence of the WUT executable file in the user's Downloads folder and download it using BITS-Transfer if it does not exist. The script also has a function to check and synchronize the system time if SSL errors are encountered during the download process.
-Getting Started
+This PowerShell script automates the download and execution of the Windows Update Tool (WUT) by Microsoft. The script checks if the WUT executable file already exists in the user's Downloads folder. If it does, the script executes the Start-Update function to start the tool. If it does not exist, the script downloads the file using the Get-Update function and then executes the Start-Update function to start the tool.
 Prerequisites
 
-This script requires PowerShell version 5.1 or higher to run. It also requires the BitsTransfer module to download the WUT using BITS-Transfer.
-Running the Script
+    PowerShell 5.1 or later
+    BITS-Transfer PowerShell module
 
-To run the script, save it with a .ps1 extension and execute it from PowerShell by running the following command:
+# Usage
 
-```
-.\WindowsUpdateTool.ps1
-```
+    Download or copy the script to a location on your computer.
+    Open PowerShell as an administrator.
+    Navigate to the directory where the script is located.
+    Run the script by typing .\update.ps1 and press Enter.
 
-## 1. Banners
-When you execute the script, you will see two banners displayed before and after the execution of the script. The Start Banner shows the name of the script in ASCII art, while the End Banner shows the same name but in a different ASCII art.
+# Global Variables
 
-## 2. Functions
+## The following global variables are defined in the script:
 
-- Start-Update
-This function changes the directory to the Downloads folder, where the WUT executable is supposed to be saved. It then executes the WUT, which initiates the update process.
+    $username: Gets the current username for downloading and changing directory.
+    $logFilename: Global variable for log file path.
+    $DownloadPath: Global variable for download path.
 
-- Get-Update
-This function downloads the WUT from the Microsoft website using BITS-Transfer. It checks for a valid internet connection and SSL errors during the download process. If the internet connection is not available or SSL errors occur, the function will call the Sync-Time function to check and synchronize the system time.
+## Functions
 
-- Sync-Time
-This function checks the system time and prompts the user to confirm if the time is correct. If the user responds negatively, the function synchronizes the system time using the Windows Time service.
 
-## 3. Conclusion
-This script automates the process of updating Windows by downloading and running the Windows Update Tool. The script can handle issues such as missing WUT executable file and SSL errors. It also displays ASCII art banners at the start and end of the script execution.
+1. This function writes log entries with timestamps to a text file located at the global $logFilename.
+```Write-Log```
+
+2. This function starts the WUT executable by changing the directory to the user's Downloads folder and executing the WUT.exe file.
+```Start-Update```
+
+3. This function downloads the WUT executable using the BITS-Transfer PowerShell module from go.microsoft.com.
+```Get-Update```
+
+4. This function checks if the WUT.exe file already exists in the Downloads folder. If it does, the script logs that it exists and executes the Start-Update function to start the tool. If it does not exist, the script downloads the file using the Get-Update function and then executes the Start-Update function to start the tool.
+```Test-WUT```
+
+## License
+
+This script is licensed under the MIT License.
